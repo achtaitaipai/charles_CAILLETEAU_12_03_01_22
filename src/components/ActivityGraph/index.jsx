@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import styled from 'styled-components'
-import CallApi from '../../utils/fetch'
+import { useFetch } from '../../utils/useFetch'
 
 const Main = styled.div`
 	grid-column: 2/3;
@@ -9,6 +8,7 @@ const Main = styled.div`
 	background: var(--neutral-color);
 	box-shadow: 0px 2px 4px 0px #00000005;
 	border-radius: 0%.3125rem;
+	position: relative;
 	.legend {
 		display: flex;
 		padding: 1.5rem 1.5rem 0 2rem;
@@ -55,20 +55,13 @@ const Main = styled.div`
 `
 
 function ActivityBoard({ userId }) {
-	const [data, setData] = useState([])
+	const { isLoading, data, error } = useFetch(`http://localhost:3000/user/${userId}/activity`)
+	const activityData = data?.data.sessions.map((el, index) => {
+		el.day = index + 1
+		return el
+	})
 
-	useEffect(() => {
-		const api = new CallApi(userId)
-		api.activity().then(result => {
-			const newData = result.data.sessions.map((el, index) => {
-				el.day = index + 1
-				return el
-			})
-			setData(newData)
-		})
-	}, [])
-
-	function CustomTooltip({ payload, label, active }) {
+	const CustomTooltip = ({ payload, label, active }) => {
 		if (active) {
 			return (
 				<div className="custom-tooltip">
@@ -80,7 +73,7 @@ function ActivityBoard({ userId }) {
 
 		return null
 	}
-	function renderLegend() {
+	const renderLegend = () => {
 		return (
 			<div className="legend">
 				<h2 className="chart-title">Activité quotidienne</h2>
@@ -91,21 +84,34 @@ function ActivityBoard({ userId }) {
 			</div>
 		)
 	}
+	if (error) {
+		return (
+			<Main>
+				<pre className="absCenter">{error}</pre>
+			</Main>
+		)
+	}
 
 	return (
 		<Main>
-			<ResponsiveContainer width="100%" height="100%">
-				<BarChart data={data} barGap={8}>
-					<Legend verticalAlign="top" content={renderLegend} />
-					<CartesianGrid strokeDasharray="2" vertical={false} />
-					<XAxis dataKey="day" tickMargin={8} tickSize={0} />
-					<YAxis yAxisId="right" orientation="right" tickMargin={10} tickSize={0} axisLine={false} tickCount={3} />
-					<YAxis yAxisId="hidden" hide />
-					<Tooltip content={<CustomTooltip />} />
-					<Bar yAxisId="right" dataKey="kilogram" fill="#282D30" barSize={7} radius={[5, 5, 0, 0]} />
-					<Bar yAxisId="hidden" dataKey="calories" fill="#E60000" barSize={7} radius={[5, 5, 0, 0]} />
-				</BarChart>
-			</ResponsiveContainer>
+			{isLoading ? (
+				<p className="absCenter">en chargement...</p>
+			) : (
+				activityData && (
+					<ResponsiveContainer width="100%" height="100%">
+						<BarChart data={activityData} barGap={8}>
+							<Legend verticalAlign="top" content={renderLegend} />
+							<CartesianGrid strokeDasharray="2" vertical={false} />
+							<XAxis dataKey="day" tickMargin={8} tickSize={0} />
+							<YAxis yAxisId="right" orientation="right" tickMargin={10} tickSize={0} axisLine={false} tickCount={3} />
+							<YAxis yAxisId="hidden" hide />
+							<Tooltip content={<CustomTooltip />} />
+							<Bar yAxisId="right" dataKey="kilogram" fill="#282D30" barSize={7} radius={[5, 5, 0, 0]} />
+							<Bar yAxisId="hidden" dataKey="calories" fill="#E60000" barSize={7} radius={[5, 5, 0, 0]} />
+						</BarChart>
+					</ResponsiveContainer>
+				)
+			)}
 		</Main>
 	)
 }

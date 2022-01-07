@@ -1,5 +1,7 @@
 import styled from 'styled-components'
+import ActivityTypeChart from '../ActivityType'
 import AverageSessionChart from '../AverageSessionChart'
+import ScoreChart from '../ScoreChart'
 
 const Main = styled.div`
 	grid-column: 2/3;
@@ -9,15 +11,8 @@ const Main = styled.div`
 	align-items: center;
 	.chart {
 		height: 100%;
-		width: auto;
-		aspect-ratio: 69/69;
-
-		:nth-child(2) {
-			background: blue;
-		}
-		:nth-child(3) {
-			background: red;
-		}
+		width: 32%;
+		/* aspect-ratio: 69/69; */
 	}
 `
 
@@ -27,8 +22,12 @@ function BoxCharts({ userId }) {
 			<div className="chart">
 				<AverageSessionChart userId={12} />
 			</div>
-			<div className="chart"></div>
-			<div className="chart"></div>
+			<div className="chart">
+				<ActivityTypeChart userId={12} />
+			</div>
+			<div className="chart">
+				<ScoreChart userId={12} />
+			</div>
 		</Main>
 	)
 }

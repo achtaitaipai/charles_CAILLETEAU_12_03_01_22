@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import CallApi from '../../utils/fetch'
+import { useFetch } from '../../utils/useFetch'
+import PlaceHolder from '../PlaHolder'
 
 const Main = styled.header`
 	grid-column: 2 / 4;
@@ -18,19 +19,30 @@ const Main = styled.header`
 	}
 `
 function Header({ userId }) {
-	const [data, setData] = useState('')
+	const { isLoading, data, error } = useFetch(`http://localhost:3000/user/${userId}`)
+	const firstName = data?.data.userInfos.firstName
 
-	useEffect(() => {
-		const api = new CallApi(userId)
-		api.identity().then(result => setData(result.data.userInfos))
-	}, [])
+	if (error) {
+		return <pre>{error}</pre>
+	}
 
 	return (
 		<Main>
-			<h1>
-				Bonjour <span>{data.firstName}</span>
-			</h1>
-			<p>Félicitation ! Vous avez explosé vos objectifs hier 👏</p>
+			{isLoading ? (
+				<>
+					<PlaceHolder height={'3rem'} width={'15em'} />
+					<PlaceHolder width={'30em'} />
+				</>
+			) : (
+				firstName && (
+					<>
+						<h1>
+							Bonjour <span>{firstName}</span>
+						</h1>
+						<p>Félicitation ! Vous avez explosé vos objectifs hier 👏</p>
+					</>
+				)
+			)}
 		</Main>
 	)
 }

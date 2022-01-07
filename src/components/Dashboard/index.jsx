@@ -4,6 +4,7 @@ import Header from '../Header'
 import ActivityBoard from '../ActivityGraph'
 import styled from 'styled-components'
 import BoxCharts from '../BoxCharts'
+import InfoCards from '../InfoCards'
 
 const Main = styled.main`
 	grid-column: 2/-1;
@@ -33,7 +34,7 @@ function Dashboard() {
 				<Header userId={12} />
 				<ActivityBoard userId={12} />
 				<BoxCharts userId={12} />
-				<div className="board3"></div>
+				<InfoCards userId={12} />
 			</Main>
 		</>
 	)
