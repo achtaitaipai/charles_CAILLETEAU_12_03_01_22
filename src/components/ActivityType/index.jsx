@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts'
 import styled from 'styled-components'
-import { useFetch } from '../../utils/useFetch'
+import { useFetch } from '../../utils/hooks/useFetch'
+import endPoints from '../../utils/api/endpoints'
+import PropTypes from 'prop-types'
 
 const Main = styled.div`
 	height: 100%;
@@ -12,13 +13,22 @@ const Main = styled.div`
 	position: relative;
 	color: white;
 `
-
+/**
+ * Renders a radar chart of performances
+ * @param  {Object} props
+ * @param  {Number} props.userId - the Id of the user
+ */
 function ActivityTypeChart({ userId }) {
-	const { isLoading, data, error } = useFetch(`http://localhost:3000/user/${userId}/performance`)
-	const newOrder = [6, 5, 4, 3, 2, 1]
+	const api = new endPoints(userId)
+	const { isLoading, data, error } = useFetch(api.userPerformances())
 	const kinds = data?.data.kind
 	let performancesData = data ? [...data.data.data].reverse() : null
 
+	/**
+	 * translate the kind of activity from english to french
+	 * @param {Object} el
+	 * @returns {String}
+	 */
 	const tradKind = el => {
 		const trads = { intensity: 'Intensité', speed: 'Vitesse', cardio: 'Cardio', energy: 'Energie', endurance: 'Endurance', strength: 'Force' }
 		return trads[kinds[el.kind]]
@@ -49,5 +59,8 @@ function ActivityTypeChart({ userId }) {
 			)}
 		</Main>
 	)
+}
+ActivityTypeChart.propTypes = {
+	userId: PropTypes.number.isRequired,
 }
 export default ActivityTypeChart

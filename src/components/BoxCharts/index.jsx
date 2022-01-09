@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import ActivityTypeChart from '../ActivityType'
 import AverageSessionChart from '../AverageSessionChart'
 import ScoreChart from '../ScoreChart'
+import PropTypes from 'prop-types'
 
 const Main = styled.div`
 	grid-column: 2/3;
@@ -15,7 +16,11 @@ const Main = styled.div`
 		/* aspect-ratio: 69/69; */
 	}
 `
-
+/**
+ * render a container of the box charts
+ * @param  {Object} props
+ * @param  {Number} props.userId - the Id of the user
+ */
 function BoxCharts({ userId }) {
 	return (
 		<Main>
@@ -30,5 +35,8 @@ function BoxCharts({ userId }) {
 			</div>
 		</Main>
 	)
+}
+BoxCharts.propTypes = {
+	userId: PropTypes.number.isRequired,
 }
 export default BoxCharts

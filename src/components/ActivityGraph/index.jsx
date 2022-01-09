@@ -1,6 +1,8 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import styled from 'styled-components'
-import { useFetch } from '../../utils/useFetch'
+import { useFetch } from '../../utils/hooks/useFetch'
+import endPoints from '../../utils/api/endpoints'
+import PropTypes from 'prop-types'
 
 const Main = styled.div`
 	grid-column: 2/3;
@@ -54,25 +56,39 @@ const Main = styled.div`
 	}
 `
 
+/**
+ * Renders a barchart of activitys
+ * @param  {Object} props
+ * @param  {Number} props.userId - the Id of the user
+ */
+
 function ActivityBoard({ userId }) {
-	const { isLoading, data, error } = useFetch(`http://localhost:3000/user/${userId}/activity`)
+	const api = new endPoints(userId)
+	const { isLoading, data, error } = useFetch(api.userActivitys())
 	const activityData = data?.data.sessions.map((el, index) => {
 		el.day = index + 1
 		return el
 	})
 
-	const CustomTooltip = ({ payload, label, active }) => {
-		if (active) {
-			return (
-				<div className="custom-tooltip">
-					<p className="kg">{`${payload[0].value}kg`}</p>
-					<p className="cal">{`${payload[1].value} Kcal`}</p>
-				</div>
-			)
-		}
+	/**
+	 *
+	 * @param {Object} param
+	 * @param {Boolean} param.active
+	 * @param {Array} param.playload
+	 * @returns {JSX|null}
+	 */
+	const CustomTooltip = ({ payload, active }) =>
+		active ? (
+			<div className="custom-tooltip">
+				<p className="kg">{`${payload[0].value}kg`}</p>
+				<p className="cal">{`${payload[1].value} Kcal`}</p>
+			</div>
+		) : null
 
-		return null
-	}
+	/**
+	 *
+	 * @returns {JSX}
+	 */
 	const renderLegend = () => {
 		return (
 			<div className="legend">
@@ -114,5 +130,8 @@ function ActivityBoard({ userId }) {
 			)}
 		</Main>
 	)
+}
+ActivityBoard.propTypes = {
+	userId: PropTypes.number.isRequired,
 }
 export default ActivityBoard

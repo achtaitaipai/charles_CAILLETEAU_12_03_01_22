@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { useFetch } from '../../utils/useFetch'
 import PlaceHolder from '../PlaHolder'
+import { useFetch } from '../../utils/hooks/useFetch'
+import endPoints from '../../utils/api/endpoints'
+import PropTypes from 'prop-types'
 
 const Main = styled.header`
 	grid-column: 2 / 4;
@@ -18,8 +19,14 @@ const Main = styled.header`
 		font-weight: 400;
 	}
 `
+/**
+ * Renders the header
+ * @param  {Object} props
+ * @param  {Number} props.userId - the Id of the user
+ */
 function Header({ userId }) {
-	const { isLoading, data, error } = useFetch(`http://localhost:3000/user/${userId}`)
+	const api = new endPoints(userId)
+	const { isLoading, data, error } = useFetch(api.userInformations())
 	const firstName = data?.data.userInfos.firstName
 
 	if (error) {
@@ -45,5 +52,8 @@ function Header({ userId }) {
 			)}
 		</Main>
 	)
+}
+Header.propTypes = {
+	userId: PropTypes.number.isRequired,
 }
 export default Header

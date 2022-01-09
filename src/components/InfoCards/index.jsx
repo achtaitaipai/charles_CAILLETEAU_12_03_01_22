@@ -3,7 +3,9 @@ import { ReactComponent as Fire } from '../../assets/imgs/fire.svg'
 import { ReactComponent as Chicken } from '../../assets/imgs/chicken.svg'
 import { ReactComponent as Apple } from '../../assets/imgs/apple.svg'
 import { ReactComponent as CheeseBurger } from '../../assets/imgs/cheeseburger.svg'
-import { useFetch } from '../../utils/useFetch'
+import { useFetch } from '../../utils/hooks/useFetch'
+import endPoints from '../../utils/api/endpoints'
+import PropTypes from 'prop-types'
 
 const Main = styled.main`
 	grid-column: 3/4;
@@ -51,9 +53,14 @@ const Main = styled.main`
 		}
 	}
 `
-
+/**
+ * Render a list of infocards
+ * @param  {Object} props
+ * @param  {Number} props.userId - the Id of the user
+ */
 function InfoCards({ userId }) {
-	const { isLoading, data, error } = useFetch(`http://localhost:3000/user/${userId}`)
+	const api = new endPoints(userId)
+	const { isLoading, data, error } = useFetch(api.userInformations())
 	const keyData = data?.data.keyData
 
 	const formatNumber = n => (String(n).length > 3 ? String(n).slice(0, 1) + ',' + String(n).slice(1) : n)
@@ -121,5 +128,7 @@ function InfoCards({ userId }) {
 		</Main>
 	)
 }
-
+InfoCards.propTypes = {
+	userId: PropTypes.number.isRequired,
+}
 export default InfoCards

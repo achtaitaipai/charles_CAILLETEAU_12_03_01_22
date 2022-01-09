@@ -24,7 +24,9 @@ const Main = styled.main`
 		background: cyan;
 	}
 `
-
+/**
+ * Render the dashboard
+ */
 function Dashboard() {
 	return (
 		<>

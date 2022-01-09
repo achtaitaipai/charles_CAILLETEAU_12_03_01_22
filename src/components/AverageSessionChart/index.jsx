@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { LineChart, Line, ResponsiveContainer, XAxis, Tooltip } from 'recharts'
 import styled from 'styled-components'
-import { useFetch } from '../../utils/useFetch'
+import { useFetch } from '../../utils/hooks/useFetch'
+import endPoints from '../../utils/api/endpoints'
+import PropTypes from 'prop-types'
 
 const Main = styled.div`
 	height: 100%;
@@ -32,9 +34,14 @@ const Main = styled.div`
 		font-weight: bolder;
 	}
 `
-
+/**
+ * Renders a linechart of average sessions
+ * @param  {Object} props
+ * @param  {Number} props.userId - the Id of the user
+ */
 function AverageSessionChart({ userId }) {
-	const { isLoading, data, error } = useFetch(`http://localhost:3000/user/${userId}/average-sessions`)
+	const api = new endPoints(userId)
+	const { isLoading, data, error } = useFetch(api.userAverageSessions())
 	const dayName = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 	const averageSessionsDatas = data?.data.sessions.map((el, index) => {
 		el.day = dayName[index]
@@ -42,6 +49,13 @@ function AverageSessionChart({ userId }) {
 	})
 	const [mousePercent, setMousePercent] = useState(0)
 
+	/**
+	 *
+	 * @param {Object} param
+	 * @param {Boolean} param.active
+	 * @param {Array} param.playload
+	 * @returns {JSX|null}
+	 */
 	function CustomTooltip({ payload, active }) {
 		if (active) {
 			return (
@@ -54,15 +68,21 @@ function AverageSessionChart({ userId }) {
 		return null
 	}
 
+	/**
+	 * set the MousePercent
+	 * @param {Object} hoveredData
+	 */
 	const onMouseMove = hoveredData => {
 		if (hoveredData && hoveredData.activePayload) {
-			console.log(hoveredData)
 			setMousePercent((100 * hoveredData.activeTooltipIndex) / 6)
 		} else {
 			setMousePercent(0)
 		}
 	}
-	const onMouseOut = hoveredData => {
+	/**
+	 * set mousePercent to zero when the mouse leave the zone
+	 */
+	const onMouseOut = () => {
 		setMousePercent(0)
 	}
 
@@ -114,5 +134,9 @@ function AverageSessionChart({ userId }) {
 			)}
 		</Main>
 	)
+}
+
+AverageSessionChart.propTypes = {
+	userId: PropTypes.number.isRequired,
 }
 export default AverageSessionChart

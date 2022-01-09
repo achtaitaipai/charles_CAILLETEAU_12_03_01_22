@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { useFetch } from '../../utils/useFetch'
+import { useFetch } from '../../utils/hooks/useFetch'
+import endPoints from '../../utils/api/endpoints'
+import PropTypes from 'prop-types'
 
 const Main = styled.div`
 	height: 100%;
@@ -36,11 +37,21 @@ const Main = styled.div`
 	}
 `
 
+/**
+ * Render a piechart of the users score
+ * @param {Object} props
+ * @param {Number} props.userId - id of the current user
+ */
 function ScoreChart({ userId }) {
+	const api = new endPoints(userId)
 	const radius = 35
-	const { isLoading, data, error } = useFetch(`http://localhost:3000/user/${userId}`)
+	const { isLoading, data, error } = useFetch(api.userInformations())
 	const fraction = data?.data.todayScore
 
+	/**
+	 * @param {number} f - fraction of the score between 0 and 1
+	 * @returns {string} -coordinates of the point
+	 */
 	const coord = f => {
 		const retour = `${Math.cos(f * 2 * Math.PI - Math.PI / 2) * radius + 50} ${Math.sin(f * 2 * Math.PI - Math.PI / 2) * radius + 50}`
 		return retour
@@ -81,5 +92,9 @@ function ScoreChart({ userId }) {
 			)}
 		</Main>
 	)
+}
+
+ScoreChart.propTypes = {
+	userId: PropTypes.number.isRequired,
 }
 export default ScoreChart

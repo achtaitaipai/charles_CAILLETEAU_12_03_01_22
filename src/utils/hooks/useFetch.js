@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
 
+/**
+ *
+ * @param {String} url
+ * @returns {Object}
+ */
 export function useFetch(url) {
 	const [data, setData] = useState()
 	const [isLoading, setLoading] = useState(true)

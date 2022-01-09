@@ -32,7 +32,9 @@ const Vertical = styled.nav`
 		margin: 0 auto;
 	}
 `
-
+/**
+ * Render vertical navbar
+ */
 function VerticalNavBar() {
 	return (
 		<Vertical>

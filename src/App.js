@@ -1,4 +1,3 @@
-import './App.css'
 import Dashboard from './components/Dashboard'
 import './assets/style/style.css'
 
