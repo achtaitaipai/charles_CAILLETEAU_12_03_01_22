@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { useFetch } from '../../utils/hooks/useFetch'
 import endPoints from '../../utils/api/endpoints'
 import PropTypes from 'prop-types'
+import { PieChart, Pie, Legend, Cell, ResponsiveContainer } from 'recharts'
 
 const Main = styled.div`
 	height: 100%;
@@ -10,6 +11,7 @@ const Main = styled.div`
 	border-radius: 0.3125rem;
 	overflow: hidden;
 	box-shadow: 0px 2px 4px 0px #00000005;
+	padding: 1rem;
 	h2 {
 		font-size: 1rem;
 		position: absolute;
@@ -33,7 +35,7 @@ const Main = styled.div`
 		transform: translate(-50%, -50%);
 	}
 	svg {
-		transform: scale(-1, 1);
+		/* transform: scale(-1, 1); */
 	}
 `
 
@@ -74,15 +76,28 @@ function ScoreChart({ userId }) {
 			) : (
 				fraction && (
 					<>
-						<svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-							<path
-								d={`M${coord(0)} A ${radius} ${radius} 0 ${fraction > 0.5 ? 1 : 0} 1 ${coord(fraction)}`}
-								fill="transparent"
-								stroke="#ff0101"
-								strokeWidth="5"
-								strokeLinecap="round"
-							/>
-						</svg>
+						<ResponsiveContainer width="100%" height="100%">
+							<PieChart>
+								<Pie
+									cx={'50%'}
+									cy={'50%'}
+									startAngle={90}
+									endAngle={450}
+									innerRadius={'85%'}
+									outerRadius={'100%'}
+									cornerRadius={'50%'}
+									dataKey="value"
+									data={[
+										{ name: 'score', value: fraction },
+										{ name: 'total', value: 1 - fraction },
+									]}
+								>
+									<Cell fill="#E60000" stroke="#E60000" />
+									<Cell fill="transparent" stroke="transparent" />
+								</Pie>
+								<Pie cx={'50%'} cy={'50%'} outerRadius={'85%'} fill="#FFFFFF" data={[{ name: 'ring', value: 100 }]} dataKey="value" />
+							</PieChart>
+						</ResponsiveContainer>
 						<h3>
 							<span>{fraction * 100}% </span>
 							<br></br>de votre objectif
