@@ -33,10 +33,10 @@ function Dashboard() {
 			<HorizontalNavBar />
 			<VerticalNavBar />
 			<Main>
-				<Header userId={12} />
-				<ActivityBoard userId={12} />
-				<BoxCharts userId={12} />
-				<InfoCards userId={12} />
+				<Header userId={18} />
+				<ActivityBoard userId={18} />
+				<BoxCharts userId={18} />
+				<InfoCards userId={18} />
 			</Main>
 		</>
 	)
